@@ -10,14 +10,15 @@ import RPi.GPIO as GPIO
 import threading
 
 RIPITDIRTEMPLATE = "'\"/$artist/$album\"'"
-VERSION = "1.04de"
+VERSION = "1.05de"
 
 class RipRobot():
 
-    def __init__(self,cdDrive,outputPath,timeout):
+    def __init__(self,cdDrive,outputPath,timeout,coder):
         self.cdDrive = cdDrive
         self.outputPath = outputPath
         self.timeout = timeout
+        self.coder = coder
         self.cdDrive.init()
         
         # GPIO initialisieren
@@ -88,7 +89,7 @@ class RipRobot():
                     # rot aus
                     self.LEDRedBlink(False,1)
                     # Hier startet der eigentlich Rip-Prozess. Dazu wird das Tool "RipIt" gestartet
-                    ripit = subprocess.Popen("ripit --transfer http --coder 2 --outputdir " + self.outputPath + " --dirtemplate=" + RIPITDIRTEMPLATE + " --nointeraction", shell=True)
+                    ripit = subprocess.Popen("ripit --transfer http --coder " + coder " --outputdir " + self.outputPath + " --dirtemplate=" + RIPITDIRTEMPLATE + " --nointeraction", shell=True)
                     ripit.communicate()
                     # RipIt ist fertig
                     # Jetzt die Daten auf den USB-Stick kopieren
@@ -152,6 +153,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="AUDIO RipRobot")
     parser.add_argument("outputPath", help="The location to rip the CD to")
     parser.add_argument("timeout", help="The number of seconds to wait for the next CD")
+    parser.add_argument("coder", help="Encoder to use, 0 = mp3 (see ripit -- help)")
     args = parser.parse_args()
 
     # CD-Laufwerk initialisieren
@@ -165,7 +167,7 @@ if __name__ == "__main__":
     elif pygame.cdrom.get_count() == 1:
         print "AUDIO RipRobot: CD-Laufwerk gefunden! Es geht los!"
         print "AUDIO RipRobot: Timeout steht auf " + args.timeout + " Sekunden"
-        RipRobot = RipRobot(pygame.cdrom.CD(0),args.outputPath,int(args.timeout))
+        RipRobot = RipRobot(pygame.cdrom.CD(0),args.outputPath,int(args.timeout),int(args.coder))
         RipRobot.start()
 
     #clean up
