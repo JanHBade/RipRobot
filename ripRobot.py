@@ -89,7 +89,7 @@ class RipRobot():
                     # rot aus
                     self.LEDRedBlink(False,1)
                     # Hier startet der eigentlich Rip-Prozess. Dazu wird das Tool "RipIt" gestartet
-                    ripit = subprocess.Popen("ripit --transfer http --coder " + coder " --outputdir " + self.outputPath + " --dirtemplate=" + RIPITDIRTEMPLATE + " --nointeraction", shell=True)
+                    ripit = subprocess.Popen("ripit --transfer http --coder "+ coder +"  --outputdir "+ self.outputPath +" --dirtemplate=" + RIPITDIRTEMPLATE + " --nointeraction", shell=True)
                     ripit.communicate()
                     # RipIt ist fertig
                     # Jetzt die Daten auf den USB-Stick kopieren
